@@ -1,0 +1,172 @@
+@import "tailwindcss";
+@source "../node_modules/hls-react-player/dist/**/*.{js,mjs}";
+
+:root {
+  --background: #09090b;
+  --foreground: #fafafa;
+  /* Match hls-react-player (.rsp-btn-primary) for UI consistency */
+  --player-accent: #3b82f6;
+  --player-accent-hover: #60a5fa;
+  --player-accent-muted: #93c5fd;
+  --player-accent-soft: rgba(59, 130, 246, 0.22);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Only style default nav inside Swiper — custom rail buttons live outside .swiper */
+.swiper > .swiper-button-prev,
+.swiper > .swiper-button-next {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(8px);
+}
+
+.swiper > .swiper-button-prev::after,
+.swiper > .swiper-button-next::after {
+  font-size: 12px !important;
+  color: #e2e8f0;
+  font-weight: 700;
+}
+
+@media (max-width: 767px) {
+  .swiper > .swiper-button-prev,
+  .swiper > .swiper-button-next {
+    display: none !important;
+  }
+}
+
+/* Let catalog cards scale above neighbors without clipping (Swiper defaults hide overflow) */
+.catalog-swiper,
+.catalog-swiper .swiper-wrapper,
+.catalog-swiper .swiper-slide {
+  overflow: visible !important;
+}
+
+/* Home rails: fixed slide widths for slidesPerView="auto" + room for edge nav */
+.catalog-rail-wrap {
+  position: relative;
+  padding-left: 2px;
+  padding-right: 2px;
+  /* Swiper Navigation attaches swiper-button-* classes and sets --swiper-theme-color (#007aff) */
+  --swiper-theme-color: #e4e4e7;
+  --swiper-navigation-color: #e4e4e7;
+}
+
+@media (min-width: 768px) {
+  .catalog-rail-wrap {
+    padding-left: 44px;
+    padding-right: 44px;
+  }
+}
+
+.catalog-rail-nav {
+  position: absolute;
+  top: 42%;
+  z-index: 20;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  margin: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(10, 12, 22, 0.92);
+  color: #f4f4f5;
+  cursor: pointer;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+  transition: opacity 0.2s, transform 0.2s, background 0.2s;
+}
+
+@media (min-width: 768px) {
+  .catalog-rail-wrap .catalog-rail-nav {
+    display: flex;
+    opacity: 0.5;
+  }
+
+  .catalog-rail-wrap:hover .catalog-rail-nav,
+  .catalog-rail-wrap:focus-within .catalog-rail-nav {
+    opacity: 1;
+  }
+}
+
+.catalog-rail-nav--prev {
+  left: 0;
+  transform: translateY(-50%);
+}
+
+.catalog-rail-nav--next {
+  right: 0;
+  transform: translateY(-50%);
+}
+
+.catalog-rail-nav--prev.swiper-button-prev {
+  left: 0 !important;
+  right: auto !important;
+}
+
+.catalog-rail-nav--next.swiper-button-next {
+  right: 0 !important;
+  left: auto !important;
+}
+
+.catalog-rail-nav:hover {
+  background: rgba(30, 35, 52, 0.96);
+}
+
+.catalog-rail-nav.swiper-button-disabled {
+  opacity: 0.22 !important;
+  pointer-events: none;
+}
+
+/* Undo Swiper Navigation module svg rules — Lucide uses stroke, not fill */
+.catalog-rail-nav.swiper-button-prev,
+.catalog-rail-nav.swiper-button-next {
+  top: 42% !important;
+  width: 40px !important;
+  height: 40px !important;
+  margin-top: 0 !important;
+  color: #f4f4f5 !important;
+}
+
+.catalog-rail-nav.swiper-button-prev svg,
+.catalog-rail-nav.swiper-button-next svg {
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  max-width: 100%;
+  max-height: 100%;
+  flex-shrink: 0;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2 !important;
+  vector-effect: non-scaling-stroke;
+}
+
+.catalog-rail-nav.swiper-button-prev::after,
+.catalog-rail-nav.swiper-button-next::after {
+  display: none !important;
+  content: none !important;
+}
+
+.catalog-swiper--poster .swiper-slide {
+  width: clamp(158px, 36vw, 236px) !important;
+}
+
+.catalog-swiper--video .swiper-slide {
+  width: clamp(268px, 62vw, 400px) !important;
+}
