@@ -42,6 +42,8 @@ npm run seed:mx
 
 ## Run app
 
+This app depends on **`hls-react-player`** (the package in `../hls-react-player`). In the Assessments monorepo, run installs from the **repository root** so npm workspaces link that package. After `hls-react-player` is published, a normal `npm install` inside this folder is enough.
+
 ```bash
 npm install
 npm run dev

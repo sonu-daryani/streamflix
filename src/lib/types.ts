@@ -1,3 +1,5 @@
+import type { SeekThumbnailGridSheet } from "hls-react-player";
+
 export type StreamType = "mp4" | "hls" | "mpd";
 
 export type DrmType = "widevine" | "playready" | "fairplay";
@@ -21,6 +23,8 @@ export type ContentItem = {
   playbackUrl?: string;
   streamType: StreamType;
   drm?: DrmConfig;
+  seekThumbnail?: string | SeekThumbnailGridSheet[];
+  previewStoryboardVtt?: string;
   episodes?: Array<{
     id: string;
     title: string;
@@ -31,6 +35,8 @@ export type ContentItem = {
     streamType: StreamType;
     posterSrc: string;
     year: number;
+    seekThumbnail?: string | SeekThumbnailGridSheet[];
+    previewStoryboardVtt?: string;
   }>;
 };
 

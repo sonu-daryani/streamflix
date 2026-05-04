@@ -27,8 +27,6 @@ export async function getDb(): Promise<Db> {
   if (override) {
     return client.db(override);
   }
-  // Use database name from MONGODB_URI when present (e.g. ...mongodb.net/streamflix).
-  // Otherwise the driver falls back to its default for URI-without-path setups.
   return client.db();
 }
 

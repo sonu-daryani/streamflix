@@ -97,7 +97,6 @@ export default function TvShowsScreen() {
   const seasonNames = useMemo(() => Array.from(seasonGroups.keys()), [seasonGroups]);
   const visibleEpisodes = seasonGroups.get(activeSeason) || [];
 
-  /** Only swap hero when hovering a row — default is series key art like Netflix. */
   const modalHeroEpisode = useMemo(() => {
     if (!activeShow?.episodes?.length || highlightedEpisodeIndex === null) return null;
     return activeShow.episodes[highlightedEpisodeIndex] ?? null;
@@ -176,7 +175,6 @@ export default function TvShowsScreen() {
             {!isPlayerOpen ? (
               <div className="overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-zinc-900 to-[#0a0f1a] shadow-2xl">
                 <div className="grid gap-0 lg:grid-cols-[minmax(280px,1fr)_1.15fr]">
-                  {/* Hero: follows keyboard/hover focus on episodes */}
                   <div className="relative min-h-[220px] lg:min-h-[420px]">
                     <div
                       className="absolute inset-0 bg-cover bg-center transition-all duration-500 ease-out"
@@ -231,7 +229,6 @@ export default function TvShowsScreen() {
                     </div>
                   </div>
 
-                  {/* Episode list — Netflix-style rows */}
                   <div className="flex max-h-[min(70vh,520px)] flex-col border-t border-white/10 lg:border-l lg:border-t-0">
                     <div className="shrink-0 space-y-3 border-b border-white/10 p-4">
                       <p className="text-sm font-semibold text-zinc-100">Episodes</p>

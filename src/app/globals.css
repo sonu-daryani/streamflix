@@ -1,10 +1,9 @@
 @import "tailwindcss";
-@source "../node_modules/hls-react-player/dist/**/*.{js,mjs}";
+@source "../../node_modules/hls-react-player/dist/**/*.{js,mjs}";
 
 :root {
   --background: #09090b;
   --foreground: #fafafa;
-  /* Match hls-react-player (.rsp-btn-primary) for UI consistency */
   --player-accent: #3b82f6;
   --player-accent-hover: #60a5fa;
   --player-accent-muted: #93c5fd;
@@ -24,7 +23,6 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
-/* Only style default nav inside Swiper — custom rail buttons live outside .swiper */
 .swiper > .swiper-button-prev,
 .swiper > .swiper-button-next {
   width: 34px !important;
@@ -49,19 +47,16 @@ body {
   }
 }
 
-/* Let catalog cards scale above neighbors without clipping (Swiper defaults hide overflow) */
 .catalog-swiper,
 .catalog-swiper .swiper-wrapper,
 .catalog-swiper .swiper-slide {
   overflow: visible !important;
 }
 
-/* Home rails: fixed slide widths for slidesPerView="auto" + room for edge nav */
 .catalog-rail-wrap {
   position: relative;
   padding-left: 2px;
   padding-right: 2px;
-  /* Swiper Navigation attaches swiper-button-* classes and sets --swiper-theme-color (#007aff) */
   --swiper-theme-color: #e4e4e7;
   --swiper-navigation-color: #e4e4e7;
 }
@@ -134,7 +129,6 @@ body {
   pointer-events: none;
 }
 
-/* Undo Swiper Navigation module svg rules — Lucide uses stroke, not fill */
 .catalog-rail-nav.swiper-button-prev,
 .catalog-rail-nav.swiper-button-next {
   top: 42% !important;

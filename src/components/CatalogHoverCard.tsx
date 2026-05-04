@@ -8,14 +8,10 @@ type CatalogHoverCardProps = {
   title: string;
   subtitle: string;
   description: string;
-  /** e.g. "2013 • Action • Hindi" — shown on hover like streaming apps */
   metaLine?: string;
-  /** Portrait poster (2/3) or landscape (16/9) for live channels */
   aspect?: "poster" | "video";
-  /** Small still previews (episode thumbs, etc.); max 4 shown in hover strip */
   previewThumbs?: string[];
   badge?: ReactNode;
-  /** Large rank digit (Top 10 style), bottom-left over poster */
   rank?: number;
   onCardClick: () => void;
   onPlay: (event: React.MouseEvent) => void;
@@ -82,7 +78,6 @@ export default function CatalogHoverCard({
             <div className="pointer-events-none absolute left-2 top-2 z-[1] drop-shadow-md">{badge}</div>
           ) : null}
 
-          {/* Hover panel — Hotstar-style: primary white CTA, dark +, meta, synopsis */}
           <div className="absolute inset-x-0 bottom-0 z-[2] max-md:hidden translate-y-2 opacity-0 transition duration-300 ease-out group-hover/card:translate-y-0 group-hover/card:opacity-100 md:pointer-events-none md:group-hover/card:pointer-events-auto">
             <div className="rounded-b-xl bg-gradient-to-t from-black via-black/95 to-transparent px-3 pb-3 pt-16 sm:px-4 sm:pb-4 sm:pt-20">
               <div className="mb-2 flex items-stretch gap-2">

@@ -57,7 +57,6 @@ export const getTvChannels = async () => {
         const title = line.includes(",") ? line.split(",").pop()?.trim() || "Live TV" : "Live TV";
         let streamUrl = "";
 
-        // Skip metadata lines and pick the next direct URL line.
         for (let cursor = index + 1; cursor < lines.length; cursor += 1) {
           const candidate = lines[cursor];
           if (!candidate) continue;
@@ -97,7 +96,6 @@ export const getTvChannels = async () => {
       };
       return channels;
     } catch {
-      // Prefer stale cache over hard failures.
       if (cache) return cache.channels;
       return [];
     } finally {

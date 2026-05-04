@@ -128,7 +128,6 @@ export async function GET(request: NextRequest, { params }: Params) {
         const trimmed = line.trim();
         if (!trimmed) return line;
         if (trimmed.startsWith("#")) {
-          // Rewrite encrypted key/media-map URI attributes when present.
           if (line.includes('URI="')) {
             return line.replace(/URI="([^"]+)"/g, (_, raw) => {
               const absolute = new URL(raw, resolvedSourceUrl).toString();

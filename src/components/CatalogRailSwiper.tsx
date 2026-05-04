@@ -10,7 +10,6 @@ import "swiper/css/free-mode";
 
 type CatalogRailSwiperProps = {
   children: React.ReactNode;
-  /** Portrait catalog cards vs wider live tiles */
   variant?: "poster" | "video";
 };
 
