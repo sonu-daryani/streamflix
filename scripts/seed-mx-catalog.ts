@@ -1,5 +1,7 @@
 /**
  * Loads catalog items from MX Player–style APIs when reachable, then writes them to MongoDB.
+ * TV shows: walks `tabs[].containers` (seasons) and paginates `detail/tab/tvshowepisodes` so all
+ * episodes with stream URLs are stored on each series document.
  * If remote APIs fail or return nothing, inserts a built‑in demo catalog (same shape as the app).
  *
  * Usage: `npm run seed:mx` (requires MONGODB_URI).
@@ -22,6 +24,11 @@ const TARGET_MOVIES = Number(process.env.MX_TARGET_MOVIES ?? "80");
 const TARGET_TV = Number(process.env.MX_TARGET_TVSHOWS ?? "40");
 const MAX_PAGES = Number(process.env.MX_MAX_PAGES ?? "40");
 const HOME_PAGE_SIZE = Number(process.env.MX_HOME_PAGE_SIZE ?? "50");
+/** Episodes list API (`detail/tab/tvshowepisodes`) */
+const EPISODE_PAGE_SIZE = Number(process.env.MX_EPISODE_PAGE_SIZE ?? "100");
+const EPISODE_LIST_MAX_PAGES = Number(process.env.MX_EPISODE_LIST_MAX_PAGES ?? "80");
+const MAX_EPISODES_PER_SHOW = Number(process.env.MX_MAX_EPISODES_PER_SHOW ?? "2000");
+const EPISODE_FETCH_DELAY_MS = Number(process.env.MX_EPISODE_FETCH_DELAY_MS ?? "45");
 
 const ASSET_BASE = process.env.MX_ASSET_BASE_URL?.replace(/\/$/, "") ?? "";
 /** CDN prefix for relative paths under `stream.hls` / `stream.dash` */
@@ -307,6 +314,135 @@ async function fetchMxVideoDetailRaw(
   return root;
 }
 
+type TvShowEpisodesTabInfo = {
+  containers: Record<string, unknown>[];
+  /** Episode id used as `filterId` for the tab API */
+  filterId: string;
+};
+
+function getTvShowEpisodesTabFromEpisodeDetail(
+  episodeDetail: Record<string, unknown>,
+): TvShowEpisodesTabInfo | null {
+  const filterId =
+    typeof episodeDetail.id === "string"
+      ? episodeDetail.id
+      : typeof episodeDetail.id === "number"
+        ? String(episodeDetail.id)
+        : "";
+  if (!filterId) return null;
+
+  const tabs = episodeDetail.tabs;
+  if (!Array.isArray(tabs)) return null;
+
+  for (const raw of tabs) {
+    if (!raw || typeof raw !== "object") continue;
+    const tab = raw as Record<string, unknown>;
+    const tabType = typeof tab.type === "string" ? tab.type : "";
+    const api = typeof tab.api === "string" ? tab.api : "";
+    const isEpisodesTab =
+      tabType === "tvshowepisodes" ||
+      api.includes("tvshowepisodes") ||
+      api.includes("detail/tab/tvshowepisodes");
+    if (!isEpisodesTab) continue;
+
+    const containers = tab.containers;
+    if (!Array.isArray(containers) || containers.length === 0) continue;
+
+    const normalized = containers.filter((c): c is Record<string, unknown> => Boolean(c && typeof c === "object"));
+    if (normalized.length === 0) continue;
+
+    return { containers: normalized, filterId };
+  }
+
+  return null;
+}
+
+function buildMxTvShowEpisodesUrl(opts: { seasonId: string; filterId: string; cursor?: string | null }): string {
+  const origin = getMxApiOrigin();
+  const u = new URL(`${origin}/v1/web/detail/tab/tvshowepisodes`);
+  u.searchParams.set("type", "season");
+  u.searchParams.set("id", opts.seasonId);
+  u.searchParams.set("filterId", opts.filterId);
+  u.searchParams.set("pageNo", "1");
+  u.searchParams.set("pageSize", String(EPISODE_PAGE_SIZE));
+  if (opts.cursor?.trim()) {
+    const extra = new URLSearchParams(opts.cursor.trim());
+    extra.forEach((value, key) => {
+      u.searchParams.set(key, value);
+    });
+  }
+  getMxDetailQueryDefaults().forEach((value, key) => {
+    if (!u.searchParams.has(key)) {
+      u.searchParams.set(key, value);
+    }
+  });
+  return u.toString();
+}
+
+async function fetchAllEpisodeRowsForSeason(
+  seasonId: string,
+  filterId: string,
+): Promise<Record<string, unknown>[]> {
+  const rows: Record<string, unknown>[] = [];
+  let cursor: string | null = null;
+
+  for (let page = 0; page < EPISODE_LIST_MAX_PAGES; page += 1) {
+    if (rows.length >= MAX_EPISODES_PER_SHOW) break;
+
+    const url = buildMxTvShowEpisodesUrl({ seasonId, filterId, cursor });
+    let json: unknown;
+    try {
+      json = await fetchJson(url);
+    } catch {
+      break;
+    }
+
+    const payload = json as Record<string, unknown>;
+    const items = payload.items;
+    if (!Array.isArray(items) || items.length === 0) break;
+
+    for (const it of items) {
+      if (it && typeof it === "object") {
+        rows.push(it as Record<string, unknown>);
+        if (rows.length >= MAX_EPISODES_PER_SHOW) break;
+      }
+    }
+
+    const nextRaw = payload.next;
+    const next = typeof nextRaw === "string" && nextRaw.trim() ? nextRaw.trim() : null;
+    if (!next) break;
+    cursor = next;
+    await sleep(EPISODE_FETCH_DELAY_MS);
+  }
+
+  return rows;
+}
+
+function mapMxEpisodeRowToEpisode(
+  row: Record<string, unknown>,
+  seasonTitle: string,
+  yearFallback: number,
+): NonNullable<ContentItem["episodes"]>[number] | null {
+  const streamUrl = extractPlaybackFromDetailRoot(row);
+  if (!streamUrl) return null;
+  const id =
+    typeof row.id === "string" ? row.id : typeof row.id === "number" ? String(row.id) : randomUUID();
+  const seq =
+    typeof row.sequence === "number" && row.sequence > 0 ? row.sequence : 1;
+
+  return {
+    id,
+    title: typeof row.title === "string" ? row.title : "Episode",
+    description: typeof row.description === "string" ? row.description : "",
+    episodeNumber: seq,
+    seasonTitle,
+    streamUrl,
+    streamType: inferStreamType(streamUrl),
+    posterSrc: pickPoster(row),
+    year: pickYear(row) || yearFallback,
+  };
+}
+
 function pickCardPoster(card: Record<string, unknown>): string {
   if (Array.isArray(card.imageInfo) && card.imageInfo[0] && typeof card.imageInfo[0] === "object") {
     const u = (card.imageInfo[0] as { url?: string }).url;
@@ -372,39 +508,93 @@ async function buildContentItemFromMxCard(
     typeof epRef.type === "string" ? epRef.type.toLowerCase() : "episode";
   if (!epId) return null;
 
-  const detail = await fetchMxVideoDetailRaw(epTypeRaw, epId);
-  if (!detail) return null;
-  const streamUrl = extractPlaybackFromDetailRoot(detail);
-  if (!streamUrl) return null;
-  const streamType = inferStreamType(streamUrl);
+  const seedEpisodeDetail = await fetchMxVideoDetailRaw(epTypeRaw, epId);
+  if (!seedEpisodeDetail) return null;
 
-  const epTitle = typeof detail.title === "string" ? detail.title : "Episode 1";
-  const epDesc =
-    typeof detail.description === "string" ? detail.description : cardDesc;
+  const yearFallback = pickYear(card);
+  const episodesTab = getTvShowEpisodesTabFromEpisodeDetail(seedEpisodeDetail);
+  const episodes: NonNullable<ContentItem["episodes"]> = [];
+  const seenEpIds = new Set<string>();
 
-  const container = detail.container;
-  let seasonTitle: string | undefined;
-  if (container && typeof container === "object") {
-    const ct = (container as Record<string, unknown>).title;
-    if (typeof ct === "string") seasonTitle = ct;
+  if (episodesTab) {
+    const seasons = [...episodesTab.containers].sort((a, b) => {
+      const sa = typeof a.sequence === "number" ? a.sequence : 0;
+      const sb = typeof b.sequence === "number" ? b.sequence : 0;
+      return sa - sb;
+    });
+
+    for (const season of seasons) {
+      const seasonId =
+        typeof season.id === "string"
+          ? season.id
+          : typeof season.id === "number"
+            ? String(season.id)
+            : "";
+      if (!seasonId) continue;
+
+      const seasonTitle =
+        typeof season.title === "string" ? season.title : undefined;
+
+      const rows = await fetchAllEpisodeRowsForSeason(seasonId, episodesTab.filterId);
+      await sleep(EPISODE_FETCH_DELAY_MS);
+
+      for (const row of rows) {
+        const ep = mapMxEpisodeRowToEpisode(row, seasonTitle ?? "Season", yearFallback);
+        if (!ep || seenEpIds.has(ep.id)) continue;
+        seenEpIds.add(ep.id);
+        episodes.push(ep);
+        if (episodes.length >= MAX_EPISODES_PER_SHOW) break;
+      }
+
+      if (episodes.length >= MAX_EPISODES_PER_SHOW) break;
+    }
   }
 
-  const epNum =
-    typeof detail.sequence === "number" && detail.sequence > 0
-      ? detail.sequence
-      : 1;
+  if (episodes.length === 0) {
+    const streamUrl = extractPlaybackFromDetailRoot(seedEpisodeDetail);
+    if (!streamUrl) return null;
+    const streamType = inferStreamType(streamUrl);
 
-  const episode = {
-    id: epId,
-    title: epTitle,
-    description: epDesc,
-    episodeNumber: epNum,
-    seasonTitle,
-    streamUrl,
-    streamType,
-    posterSrc: pickPoster(detail),
-    year: pickYear(detail),
-  };
+    const container = seedEpisodeDetail.container;
+    let seasonTitle: string | undefined;
+    if (container && typeof container === "object") {
+      const ct = (container as Record<string, unknown>).title;
+      if (typeof ct === "string") seasonTitle = ct;
+    }
+
+    const epNum =
+      typeof seedEpisodeDetail.sequence === "number" && seedEpisodeDetail.sequence > 0
+        ? seedEpisodeDetail.sequence
+        : 1;
+
+    episodes.push({
+      id: epId,
+      title:
+        typeof seedEpisodeDetail.title === "string"
+          ? seedEpisodeDetail.title
+          : "Episode 1",
+      description:
+        typeof seedEpisodeDetail.description === "string"
+          ? seedEpisodeDetail.description
+          : cardDesc,
+      episodeNumber: epNum,
+      seasonTitle,
+      streamUrl,
+      streamType,
+      posterSrc: pickPoster(seedEpisodeDetail),
+      year: pickYear(seedEpisodeDetail),
+    });
+  }
+
+  episodes.sort((a, b) => {
+    const sa = (a.seasonTitle ?? "").localeCompare(b.seasonTitle ?? "");
+    if (sa !== 0) return sa;
+    return a.episodeNumber - b.episodeNumber;
+  });
+
+  const primaryStream = episodes[0]?.streamUrl;
+  const primaryType = episodes[0]?.streamType;
+  if (!primaryStream || !primaryType) return null;
 
   return {
     id: idStr,
@@ -412,12 +602,12 @@ async function buildContentItemFromMxCard(
     description: cardDesc,
     category: "tvshow",
     genre: genreQuick,
-    year: pickYear(card),
+    year: yearFallback,
     featured: false,
     posterSrc: posterFallback,
-    streamUrl,
-    streamType,
-    episodes: [episode],
+    streamUrl: primaryStream,
+    streamType: primaryType,
+    episodes,
   };
 }
 
