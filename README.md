@@ -5,7 +5,7 @@ Netflix-style streaming platform built with Next.js, a **MongoDB**-backed catalo
 <img width="1791" height="1077" alt="Screenshot 2026-05-04 at 1 59 03 PM" src="https://github.com/user-attachments/assets/85dca20e-89c7-47ff-817c-920c815012cc" />
 
 ---
-<img width="898" height="519" alt="Screenshot 2026-05-04 at 1 59 34 PM" src="https://github.com/user-attachments/assets/56116d78-1068-4fe6-8ff4-b9a098ec1889" />
+<img width="1791" height="1077" alt="Screenshot 2026-05-04 at 1 59 34 PM" src="https://github.com/user-attachments/assets/56116d78-1068-4fe6-8ff4-b9a098ec1889" />
 
 ---
 
