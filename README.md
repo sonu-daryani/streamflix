@@ -1,14 +1,27 @@
 ## StreamFlix
 
-Netflix-style streaming platform built with Next.js, a **MongoDB**-backed catalog, HLS/MPD custom player support, CMS APIs, and Zustand state management.
+Netflix-style streaming platform built with Next.js, a **MongoDB**-backed catalog, HLS/MPD playback via **`hls-react-player`**, CMS APIs, and Zustand state management.
+
 ---
+
 <img width="1791" height="1077" alt="Screenshot 2026-05-04 at 1 59 03 PM" src="https://github.com/user-attachments/assets/85dca20e-89c7-47ff-817c-920c815012cc" />
 
 ---
+
 <img width="1791" height="1077" alt="Screenshot 2026-05-04 at 1 59 34 PM" src="https://github.com/user-attachments/assets/56116d78-1068-4fe6-8ff4-b9a098ec1889" />
 
 ---
 
+## Related: `hls-react-player`
+
+Playback uses **`hls-react-player`** from the **npm** registry (the `0.5.x` line; see [`package.json`](package.json) for the semver range).
+
+| Project | Role |
+| -------- | ---- |
+| **StreamFlix** (this folder) | Full Next.js app: catalog, search, CMS, signed streams |
+| [Vite demo](../hls-react-player/demo/README.md) (`hls-react-player/demo/`) | Standalone playground for the same package (presets, live preview, code editor) |
+
+---
 
 ## Environment
 
@@ -42,14 +55,16 @@ npm run seed:mx
 
 ## Run app
 
-This app depends on **`hls-react-player`** (the package in `../hls-react-player`). In the Assessments monorepo, run installs from the **repository root** so npm workspaces link that package. After `hls-react-player` is published, a normal `npm install` inside this folder is enough.
+From this project directory:
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) and CMS at [http://localhost:3000/cms](http://localhost:3000/cms).
+This installs **`hls-react-player`** from npm along with the other dependencies.
+
+Open [http://localhost:3000](http://localhost:3000) and the CMS at [http://localhost:3000/cms](http://localhost:3000/cms).
 
 ## APIs
 
