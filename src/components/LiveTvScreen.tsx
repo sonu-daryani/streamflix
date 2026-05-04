@@ -66,14 +66,14 @@ export default function LiveTvScreen() {
   return (
     <div className="min-h-screen overflow-x-clip overflow-y-visible bg-[#050505] text-white">
       <TopNav />
-      <main className="mx-auto max-w-7xl overflow-visible px-6 pb-16 pt-24">
-        <h2 className="mb-2 text-4xl font-black">Live TV</h2>
+      <main className="mx-auto max-w-7xl overflow-visible px-4 pb-16 pt-24 sm:px-6">
+        <h2 className="mb-2 text-2xl font-black sm:text-4xl">Live TV</h2>
         <p className="mb-6 text-zinc-400">Live channels from your M3U playlist.</p>
         {error ? <p className="mb-4 text-sm text-blue-300">{error}</p> : null}
         {!isLoading && !error && channels.length === 0 ? (
           <p className="mb-4 text-sm text-zinc-400">No channels found in your playlist.</p>
         ) : null}
-        <div className="grid grid-cols-1 gap-8 overflow-visible pb-16 pt-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 overflow-visible pb-16 pt-4 sm:gap-6 md:grid-cols-3 md:gap-8 lg:grid-cols-3 xl:grid-cols-4 [&>*]:min-w-0">
           {channels.map((channel) => {
             const asContent = (): ContentItem => ({
               id: channel.id,

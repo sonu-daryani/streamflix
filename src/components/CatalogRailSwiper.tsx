@@ -38,21 +38,21 @@ export default function CatalogRailSwiper({ children, variant = "poster" }: Cata
       <Swiper
         modules={[Navigation, FreeMode]}
         slidesPerView="auto"
-        spaceBetween={variant === "video" ? 18 : 16}
+        spaceBetween={variant === "video" ? 12 : 12}
+        breakpoints={{
+          640: { spaceBetween: variant === "video" ? 24 : 24 },
+          768: { spaceBetween: variant === "video" ? 32 : 32 },
+        }}
         slidesOffsetBefore={0}
         slidesOffsetAfter={0}
         watchOverflow
         grabCursor
         freeMode={{ enabled: true, momentum: true, momentumRatio: 0.88, minimumVelocity: 0.02 }}
-        className={`catalog-swiper catalog-swiper--${variant} !overflow-visible pb-20 pt-2`}
+        className={`catalog-swiper catalog-swiper--${variant} !overflow-visible pb-10 pt-1 md:pb-20 md:pt-2`}
         style={{ overflow: "visible" }}
-        navigation
-        onBeforeInit={(swiper) => {
-          const n = swiper.params.navigation;
-          if (n && typeof n !== "boolean") {
-            n.prevEl = `.${prevClass}`;
-            n.nextEl = `.${nextClass}`;
-          }
+        navigation={{
+          prevEl: `.${prevClass}`,
+          nextEl: `.${nextClass}`,
         }}
       >
         {children}

@@ -100,17 +100,17 @@ export default function HomeScreen() {
       <TopNav />
 
       <main className="overflow-visible pt-20">
-        <section className="relative h-[68vh] min-h-[480px] overflow-hidden border-b border-white/10">
+        <section className="relative min-h-[min(68vh,560px)] h-[56vh] overflow-hidden border-b border-white/10 sm:h-[62vh] sm:min-h-[480px] md:h-[68vh]">
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${featuredItem?.posterSrc ?? ""})` }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-black/30 to-transparent" />
-          <div className="relative mx-auto flex h-full w-full max-w-7xl items-end px-6 pb-14">
+          <div className="relative mx-auto flex h-full w-full max-w-7xl items-end px-4 pb-10 sm:px-6 sm:pb-14">
             <div className="max-w-2xl">
-              <p className="mb-3 text-sm uppercase tracking-[0.2em] text-zinc-300">Featured</p>
-              <h2 className="text-5xl font-black leading-tight md:text-7xl">
+              <p className="mb-3 text-xs uppercase tracking-[0.2em] text-zinc-300 sm:text-sm">Featured</p>
+              <h2 className="text-3xl font-black leading-tight sm:text-5xl md:text-7xl">
                 {featuredItem?.title ?? "Loading..."}
               </h2>
               <p className="mt-4 line-clamp-3 text-zinc-300">
@@ -147,14 +147,14 @@ export default function HomeScreen() {
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-7xl space-y-12 overflow-visible px-6 py-12">
+        <section className="mx-auto w-full max-w-7xl space-y-10 overflow-visible px-4 py-10 sm:space-y-12 sm:px-6 sm:py-12">
           {isLoading ? <p className="text-zinc-400">Loading...</p> : null}
           {visibleRails.map((rail) => (
             <section key={rail.title} className="overflow-visible">
               <h3 className="mb-4 text-xl font-semibold">{rail.title}</h3>
               <CatalogRailSwiper variant="poster">
                 {rail.items.map((item, index) => (
-                  <SwiperSlide key={`${rail.title}-${item.id}`} className="!h-auto py-6">
+                  <SwiperSlide key={`${rail.title}-${item.id}`} className="!flex py-3 md:py-6">
                     <CatalogHoverCard
                       posterSrc={item.posterSrc}
                       title={item.title}
@@ -180,7 +180,7 @@ export default function HomeScreen() {
               <h3 className="mb-4 text-xl font-semibold">Live TV</h3>
               <CatalogRailSwiper variant="video">
                 {tvChannels.map((channel) => (
-                  <SwiperSlide key={channel.id} className="!h-auto py-6">
+                  <SwiperSlide key={channel.id} className="!flex py-3 md:py-6">
                     <CatalogHoverCard
                       aspect="video"
                       posterSrc={channel.posterSrc}

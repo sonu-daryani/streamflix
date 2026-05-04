@@ -53,6 +53,18 @@ body {
   overflow: visible !important;
 }
 
+/* Equal-height slides in a rail so card footers / actions align across the row */
+.catalog-swiper .swiper-wrapper {
+  align-items: stretch;
+}
+
+.catalog-swiper .swiper-slide {
+  display: flex;
+  height: auto;
+  align-self: stretch;
+  box-sizing: border-box;
+}
+
 .catalog-rail-wrap {
   position: relative;
   padding-left: 2px;
@@ -157,10 +169,64 @@ body {
   content: none !important;
 }
 
+/*
+ * Homepage rails: slide width matches catalog grid cells on Movies / TV / Live TV
+ * — <768px: 2 cols, px-4, gap-3 (12px) → (100vw - 2rem - 0.75rem) / 2
+ * — 768+: 3 cols, px-6, two × gap-8 (32px) → (100vw - 3rem - 4rem) / 3
+ */
 .catalog-swiper--poster .swiper-slide {
-  width: clamp(158px, 36vw, 236px) !important;
+  width: min(
+      236px,
+      max(148px, calc((100vw - 2rem - 0.75rem) / 2))
+    )
+    !important;
 }
 
+@media (min-width: 640px) and (max-width: 767px) {
+  .catalog-swiper--poster .swiper-slide {
+    width: min(
+        236px,
+        max(156px, calc((100vw - 3rem - 1.5rem) / 2))
+      )
+      !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .catalog-swiper--poster .swiper-slide {
+    width: min(
+        236px,
+        max(158px, calc((100vw - 3rem - 4rem) / 3))
+      )
+      !important;
+  }
+}
+
+/* Video rails: same cell width as grid; max width caps landscape tiles */
 .catalog-swiper--video .swiper-slide {
-  width: clamp(268px, 62vw, 400px) !important;
+  width: min(
+      400px,
+      max(160px, calc((100vw - 2rem - 0.75rem) / 2))
+    )
+    !important;
+}
+
+@media (min-width: 640px) and (max-width: 767px) {
+  .catalog-swiper--video .swiper-slide {
+    width: min(
+        400px,
+        max(172px, calc((100vw - 3rem - 1.5rem) / 2))
+      )
+      !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .catalog-swiper--video .swiper-slide {
+    width: min(
+        400px,
+        max(220px, calc((100vw - 3rem - 4rem) / 3))
+      )
+      !important;
+  }
 }

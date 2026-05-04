@@ -131,10 +131,10 @@ export default function TvShowsScreen() {
   return (
     <div className="min-h-screen overflow-x-clip overflow-y-visible bg-[#050505] text-white">
       <TopNav />
-      <main className="mx-auto max-w-7xl overflow-visible px-6 pb-16 pt-24">
-        <h2 className="mb-2 text-4xl font-black">TV Shows</h2>
+      <main className="mx-auto max-w-7xl overflow-visible px-4 pb-16 pt-24 sm:px-6">
+        <h2 className="mb-2 text-2xl font-black sm:text-4xl">TV Shows</h2>
         <p className="mb-6 text-zinc-400">Streaming-first titles from your catalog.</p>
-        <div className="grid grid-cols-1 gap-8 overflow-visible pb-16 pt-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 overflow-visible pb-16 pt-4 sm:gap-6 md:grid-cols-3 md:gap-8 lg:grid-cols-3 xl:grid-cols-4 [&>*]:min-w-0">
           {shows.map((item) => {
             const previewEpisodes = (item.episodes || []).slice(0, 4);
             const episodeCount = item.episodes?.length ?? 0;
