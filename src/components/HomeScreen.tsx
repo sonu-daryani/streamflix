@@ -447,12 +447,11 @@ export default function HomeScreen() {
                 </div>
                 <span className="hidden min-h-px min-w-[2rem] flex-1 translate-y-[-6px] bg-gradient-to-r from-emerald-500/35 to-transparent sm:block" />
               </div>
-              <CatalogRailSwiper variant="video" relaxedGap>
+              <CatalogRailSwiper variant="poster" relaxedGap>
                 {tvChannels.map((channel) => (
                   <SwiperSlide key={channel.id} className="!flex py-2 md:py-4">
                     <CatalogHoverCard
                       density="cozy"
-                      aspect="video"
                       posterSrc={channel.posterSrc}
                       title={channel.title}
                       subtitle={channel.group}

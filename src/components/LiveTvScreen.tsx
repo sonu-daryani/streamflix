@@ -102,7 +102,7 @@ export default function LiveTvScreen() {
             return (
               <CatalogHoverCard
                 key={channel.id}
-                aspect="video"
+                density="cozy"
                 posterSrc={channel.posterSrc}
                 title={channel.title}
                 subtitle={channel.group}
