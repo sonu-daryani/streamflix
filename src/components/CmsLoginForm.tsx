@@ -35,34 +35,50 @@ export default function CmsLoginForm() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-950 px-4 text-white">
-      <div className="w-full max-w-md rounded-xl border border-white/10 bg-zinc-900/80 p-6 shadow-2xl">
-        <h1 className="mb-2 text-2xl font-bold text-blue-400">CMS Admin Login</h1>
-        <p className="mb-6 text-sm text-zinc-400">Sign in to manage catalog entries.</p>
-        <form onSubmit={onSubmit} className="space-y-3">
-          <input
-            type="email"
-            className="w-full rounded border border-white/15 bg-zinc-950 px-3 py-2 text-sm"
-            placeholder="Email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            required
-          />
-          <input
-            type="password"
-            className="w-full rounded border border-white/15 bg-zinc-950 px-3 py-2 text-sm"
-            placeholder="Password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            required
-          />
-          {error ? <p className="text-sm text-blue-300">{error}</p> : null}
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full rounded bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-60"
-          >
-            {isLoading ? "Signing in..." : "Sign In"}
+    <div className="flex min-h-screen items-center justify-center px-4 py-12 text-white">
+      <div className="w-full max-w-md rounded-3xl border border-white/[0.1] bg-zinc-900/90 p-8 shadow-2xl shadow-black/50 ring-1 ring-white/5 backdrop-blur-md">
+        <h1 className="mb-2 text-2xl font-bold tracking-tight text-white">CMS Admin</h1>
+        <p className="mb-8 text-sm leading-relaxed text-zinc-400">
+          Sign in to add titles, manage featured picks, and keep the catalog up to date.
+        </p>
+        <form onSubmit={onSubmit} className="space-y-4">
+          <div className="space-y-1.5">
+            <label htmlFor="cms-email" className="text-xs font-medium text-zinc-500">
+              Email
+            </label>
+            <input
+              id="cms-email"
+              type="email"
+              className="input-modern"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              autoComplete="email"
+              required
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label htmlFor="cms-password" className="text-xs font-medium text-zinc-500">
+              Password
+            </label>
+            <input
+              id="cms-password"
+              type="password"
+              className="input-modern"
+              placeholder="••••••••"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              autoComplete="current-password"
+              required
+            />
+          </div>
+          {error ? (
+            <p className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+              {error}
+            </p>
+          ) : null}
+          <button type="submit" disabled={isLoading} className="btn-primary w-full py-3 disabled:opacity-60">
+            {isLoading ? "Signing in…" : "Sign in"}
           </button>
         </form>
       </div>

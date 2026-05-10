@@ -30,7 +30,18 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body suppressHydrationWarning className="min-h-full flex flex-col">
-        <Suspense fallback={<div className="min-h-screen flex-1 bg-[#09090b]" aria-hidden />}>
+        <Suspense
+          fallback={
+            <div
+              className="flex min-h-screen flex-1 flex-col items-center justify-center gap-4 bg-[#121212] px-6"
+              aria-busy
+              aria-label="Loading"
+            >
+              <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/15 border-t-[#e50914]" />
+              <p className="text-sm text-zinc-500">Loading…</p>
+            </div>
+          }
+        >
           {children}
         </Suspense>
       </body>

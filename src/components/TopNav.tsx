@@ -115,13 +115,19 @@ export default function TopNav() {
 
   return (
     <>
-    <div className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-black/70 backdrop-blur-xl">
+    <a
+      href="#main-content"
+      className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-xl focus:bg-[#e50914] focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-white focus:shadow-xl focus:outline-none"
+    >
+      Skip to main content
+    </a>
+    <div className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.08] bg-zinc-950/75 shadow-[0_8px_32px_rgba(0,0,0,0.35)] backdrop-blur-xl backdrop-saturate-150">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-3 sm:px-6 sm:py-4">
         <div className="flex items-center justify-between gap-2 sm:gap-4">
           <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3 md:min-w-0 md:flex-none md:flex-initial">
             <button
               type="button"
-              className="inline-flex shrink-0 rounded-full border border-white/15 p-2 text-zinc-300 transition hover:border-white/40 hover:text-white md:hidden"
+              className="inline-flex shrink-0 rounded-full border border-white/12 bg-white/[0.04] p-2 text-zinc-300 transition hover:border-white/25 hover:bg-white/[0.07] hover:text-white md:hidden"
               aria-expanded={menuOpen}
               aria-controls="topnav-mobile-drawer"
               onClick={() => (menuOpen ? closeMenu() : openMenu())}
@@ -131,21 +137,27 @@ export default function TopNav() {
             </button>
             <Link
               href="/"
-              className="flex min-w-0 items-center gap-2 text-2xl font-black tracking-wide text-blue-400"
+              className="group/logo flex min-w-0 items-center gap-2.5 text-xl font-black tracking-tight text-white sm:text-2xl"
               onClick={closeMenu}
             >
-              <span className="rounded-md bg-blue-500/20 p-1.5 text-blue-300">
-                <Clapperboard size={18} className="text-blue-400" />
+              <span className="flex rounded-xl bg-gradient-to-br from-red-600/30 to-zinc-900/40 p-2 ring-1 ring-white/10 transition group-hover/logo:ring-white/20">
+                <Clapperboard size={18} className="text-rose-200" aria-hidden />
               </span>
-              <span className="truncate">StreamFlix</span>
+              <span className="truncate bg-gradient-to-r from-white to-zinc-300 bg-clip-text text-transparent">
+                StreamFlix
+              </span>
             </Link>
           </div>
-          <nav className="hidden items-center gap-5 text-sm text-zinc-300 md:flex" aria-label="Main">
+          <nav className="hidden items-center gap-1 rounded-full border border-white/[0.08] bg-white/[0.04] p-1 text-sm text-zinc-400 shadow-inner shadow-black/20 md:flex" aria-label="Main">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={pathname === item.href ? "text-white" : "hover:text-white"}
+                className={`rounded-full px-3.5 py-2 font-medium transition ${
+                  pathname === item.href
+                    ? "bg-white/12 text-white shadow-sm"
+                    : "hover:bg-white/8 hover:text-zinc-100"
+                }`}
               >
                 {item.label}
               </Link>
@@ -158,10 +170,10 @@ export default function TopNav() {
               aria-expanded={searchOpen}
               aria-controls="topnav-search-panel"
               onClick={toggleSearch}
-              className={`rounded-full border p-2 transition hover:border-white/40 hover:text-white ${
+              className={`rounded-full border p-2 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500/80 ${
                 searchOpen
-                  ? "border-blue-500/60 bg-blue-500/15 text-blue-200"
-                  : "border-white/15 text-zinc-300"
+                  ? "border-red-500/55 bg-red-600/15 text-rose-100 shadow-[0_0_20px_rgba(229,9,20,0.28)]"
+                  : "border-white/12 bg-white/[0.04] text-zinc-300 hover:border-white/25 hover:text-white"
               }`}
               aria-label={searchOpen ? "Close search" : "Open search"}
             >
@@ -172,7 +184,7 @@ export default function TopNav() {
                 href="https://github.com/sonu-daryani"
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full border border-white/15 p-2 text-zinc-300 transition hover:border-white/40 hover:text-white"
+                className="rounded-full border border-white/12 bg-white/[0.04] p-2 text-zinc-400 transition hover:border-white/22 hover:bg-white/[0.07] hover:text-white"
                 aria-label="GitHub"
               >
                 <GitCommit size={16} />
@@ -181,7 +193,7 @@ export default function TopNav() {
                 href="https://www.linkedin.com/in/sonu-daryani-248a18202/"
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full border border-white/15 p-2 text-zinc-300 transition hover:border-white/40 hover:text-white"
+                className="rounded-full border border-white/12 bg-white/[0.04] p-2 text-zinc-400 transition hover:border-white/22 hover:bg-white/[0.07] hover:text-white"
                 aria-label="LinkedIn"
               >
                 <ContactRound size={16} />
@@ -190,7 +202,7 @@ export default function TopNav() {
                 href="https://sonu-daryani-portfolio.vercel.app/"
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full border border-white/15 p-2 text-zinc-300 transition hover:border-white/40 hover:text-white"
+                className="rounded-full border border-white/12 bg-white/[0.04] p-2 text-zinc-400 transition hover:border-white/22 hover:bg-white/[0.07] hover:text-white"
                 aria-label="Portfolio"
               >
                 <Globe size={16} />
@@ -198,7 +210,7 @@ export default function TopNav() {
             </span>
             <Link
               href="/cms"
-              className="ml-0.5 rounded-md bg-blue-600 px-2.5 py-1.5 text-xs font-medium text-white shadow-sm shadow-blue-900/40 hover:bg-blue-500 sm:px-4 sm:py-2 sm:text-sm"
+              className="btn-primary ml-0.5 px-3 py-2 text-xs sm:px-4 sm:text-sm"
               onClick={closeMenu}
             >
               CMS
@@ -211,36 +223,46 @@ export default function TopNav() {
             ref={searchPanelRef}
             id="topnav-search-panel"
             role="search"
-            className="flex flex-col gap-2 border-t border-white/10 pt-3 sm:flex-row sm:flex-wrap sm:items-center"
+            aria-label="Search and filter catalog"
+            className="flex flex-col gap-3 border-t border-white/[0.08] pt-4 sm:flex-row sm:flex-wrap sm:items-end"
           >
-            <form onSubmit={applyFilters} className="flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-              <input
-                name="q"
-                key={`q-${queryParam}`}
-                defaultValue={queryParam}
-                placeholder="Search titles or description..."
-                autoFocus
-                className="w-full min-w-0 rounded-lg border border-white/15 bg-zinc-900 px-3 py-2 text-sm text-white outline-none focus:border-blue-500 sm:max-w-sm"
-              />
-              <select
-                name="genre"
-                key={`g-${genreParam}`}
-                defaultValue={genreParam}
-                className="w-full rounded-lg border border-white/15 bg-zinc-900 px-3 py-2 text-sm text-white outline-none focus:border-blue-500 sm:w-auto"
-              >
-                <option value="all">All Genres</option>
-                {genres.map((genre) => (
-                  <option key={genre} value={genre}>
-                    {genre}
-                  </option>
-                ))}
-              </select>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="submit"
-                  className="rounded-md bg-zinc-800 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700"
+            <form onSubmit={applyFilters} className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+              <div className="flex w-full min-w-0 flex-1 flex-col gap-1.5 sm:max-w-sm">
+                <label htmlFor="topnav-q" className="text-xs font-medium text-zinc-500">
+                  Search
+                </label>
+                <input
+                  id="topnav-q"
+                  name="q"
+                  key={`q-${queryParam}`}
+                  defaultValue={queryParam}
+                  placeholder="Titles, descriptions…"
+                  autoFocus
+                  className="input-modern"
+                />
+              </div>
+              <div className="flex w-full flex-col gap-1.5 sm:w-auto sm:min-w-[11rem]">
+                <label htmlFor="topnav-genre" className="text-xs font-medium text-zinc-500">
+                  Genre
+                </label>
+                <select
+                  id="topnav-genre"
+                  name="genre"
+                  key={`g-${genreParam}`}
+                  defaultValue={genreParam}
+                  className="input-modern"
                 >
-                  Apply
+                  <option value="all">All genres</option>
+                  {genres.map((genre) => (
+                    <option key={genre} value={genre}>
+                      {genre}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex flex-wrap gap-2 pb-0.5">
+                <button type="submit" className="btn-primary px-5 py-2.5">
+                  Apply filters
                 </button>
                 <button
                   type="button"
@@ -248,14 +270,14 @@ export default function TopNav() {
                     router.push("/");
                     setSearchOpen(false);
                   }}
-                  className="rounded-md bg-zinc-800 px-4 py-2 text-sm text-white hover:bg-zinc-700"
+                  className="btn-secondary px-5 py-2.5"
                 >
                   Reset
                 </button>
                 <button
                   type="button"
                   onClick={() => setSearchOpen(false)}
-                  className="inline-flex items-center gap-1 rounded-md border border-white/15 px-3 py-2 text-sm text-zinc-300 hover:bg-white/10 hover:text-white"
+                  className="btn-ghost inline-flex items-center gap-1.5"
                   aria-label="Close search"
                 >
                   <X size={16} strokeWidth={2} aria-hidden />
@@ -289,15 +311,15 @@ export default function TopNav() {
           role="dialog"
           aria-modal="true"
           aria-label="Site navigation"
-          className={`absolute left-0 top-0 z-[1] flex h-full w-[min(100%,20rem)] flex-col border-r border-white/10 bg-zinc-950 shadow-[4px_0_24px_rgba(0,0,0,0.6)] transition-transform duration-200 ease-out ${
+          className={`absolute left-0 top-0 z-[1] flex h-full w-[min(100%,20rem)] flex-col border-r border-white/[0.08] bg-zinc-950/98 shadow-[8px_0_40px_rgba(0,0,0,0.55)] backdrop-blur-xl transition-transform duration-200 ease-out ${
             menuOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          <div className="flex items-center justify-between border-b border-white/10 px-4 py-4">
-            <p className="text-sm font-semibold uppercase tracking-wide text-zinc-400">Menu</p>
+          <div className="flex items-center justify-between border-b border-white/[0.08] px-4 py-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Menu</p>
             <button
               type="button"
-              className="rounded-full border border-white/15 p-2 text-zinc-300 transition hover:border-white/40 hover:text-white"
+              className="rounded-full border border-white/12 bg-white/[0.05] p-2 text-zinc-300 transition hover:border-white/25 hover:text-white"
               onClick={closeMenu}
               aria-label="Close menu"
             >
@@ -310,24 +332,24 @@ export default function TopNav() {
                 key={item.href}
                 href={item.href}
                 onClick={closeMenu}
-                className={`rounded-lg px-3 py-3 text-base font-medium ${
+                className={`rounded-xl px-3 py-3 text-base font-medium transition ${
                   pathname === item.href
-                    ? "bg-white/10 text-white"
-                    : "text-zinc-300 hover:bg-white/5 hover:text-white"
+                    ? "bg-white/12 text-white shadow-inner shadow-black/30"
+                    : "text-zinc-400 hover:bg-white/[0.06] hover:text-white"
                 }`}
               >
                 {item.label}
               </Link>
             ))}
           </nav>
-          <div className="mt-auto border-t border-white/10 px-4 py-4">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">Links</p>
+          <div className="mt-auto border-t border-white/[0.08] px-4 py-4">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-600">Links</p>
             <div className="flex flex-wrap gap-2">
               <Link
                 href="https://github.com/sonu-daryani"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white"
+                className="inline-flex items-center gap-2 rounded-xl border border-white/12 bg-white/[0.03] px-3 py-2 text-sm text-zinc-400 transition hover:border-white/20 hover:bg-white/[0.06] hover:text-white"
                 onClick={closeMenu}
               >
                 <GitCommit size={16} />
@@ -337,7 +359,7 @@ export default function TopNav() {
                 href="https://www.linkedin.com/in/sonu-daryani-248a18202/"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white"
+                className="inline-flex items-center gap-2 rounded-xl border border-white/12 bg-white/[0.03] px-3 py-2 text-sm text-zinc-400 transition hover:border-white/20 hover:bg-white/[0.06] hover:text-white"
                 onClick={closeMenu}
               >
                 <ContactRound size={16} />
@@ -347,7 +369,7 @@ export default function TopNav() {
                 href="https://sonu-daryani-portfolio.vercel.app/"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white"
+                className="inline-flex items-center gap-2 rounded-xl border border-white/12 bg-white/[0.03] px-3 py-2 text-sm text-zinc-400 transition hover:border-white/20 hover:bg-white/[0.06] hover:text-white"
                 onClick={closeMenu}
               >
                 <Globe size={16} />

@@ -11,9 +11,15 @@ import "swiper/css/free-mode";
 type CatalogRailSwiperProps = {
   children: React.ReactNode;
   variant?: "poster" | "video";
+  /** Wider gaps between slides + calmer padding — e.g. homepage rails */
+  relaxedGap?: boolean;
 };
 
-export default function CatalogRailSwiper({ children, variant = "poster" }: CatalogRailSwiperProps) {
+export default function CatalogRailSwiper({
+  children,
+  variant = "poster",
+  relaxedGap = false,
+}: CatalogRailSwiperProps) {
   const reactId = useId().replace(/:/g, "");
   const prevClass = `catalog-rail-prev-${reactId}`;
   const nextClass = `catalog-rail-next-${reactId}`;
@@ -38,17 +44,35 @@ export default function CatalogRailSwiper({ children, variant = "poster" }: Cata
       <Swiper
         modules={[Navigation, FreeMode]}
         slidesPerView="auto"
-        spaceBetween={variant === "video" ? 12 : 12}
+        spaceBetween={
+          relaxedGap ? (variant === "video" ? 14 : 14) : variant === "video" ? 12 : 12
+        }
         breakpoints={{
-          640: { spaceBetween: variant === "video" ? 24 : 24 },
-          768: { spaceBetween: variant === "video" ? 32 : 32 },
+          640: {
+            spaceBetween: relaxedGap
+              ? variant === "video"
+                ? 20
+                : 18
+              : variant === "video"
+                ? 24
+                : 24,
+          },
+          768: {
+            spaceBetween: relaxedGap
+              ? variant === "video"
+                ? 28
+                : 24
+              : variant === "video"
+                ? 32
+                : 32,
+          },
         }}
         slidesOffsetBefore={0}
         slidesOffsetAfter={0}
         watchOverflow
         grabCursor
         freeMode={{ enabled: true, momentum: true, momentumRatio: 0.88, minimumVelocity: 0.02 }}
-        className={`catalog-swiper catalog-swiper--${variant} !overflow-visible pb-10 pt-1 md:pb-20 md:pt-2`}
+        className={`catalog-swiper catalog-swiper--${variant} !overflow-visible pt-1 ${relaxedGap ? "pb-6 md:pb-12 md:pt-2" : "pb-10 md:pb-20 md:pt-2"}`}
         style={{ overflow: "visible" }}
         navigation={{
           prevEl: `.${prevClass}`,

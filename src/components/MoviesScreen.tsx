@@ -73,11 +73,20 @@ export default function MoviesScreen() {
   );
 
   return (
-    <div className="min-h-screen overflow-x-clip overflow-y-visible bg-[#050505] text-white">
+    <div className="min-h-screen overflow-x-clip overflow-y-visible bg-[#121212] text-white">
       <TopNav />
-      <main className="mx-auto max-w-7xl overflow-visible px-4 pb-16 pt-24 sm:px-6">
-        <h2 className="mb-2 text-2xl font-black sm:text-4xl">Movies</h2>
-        <p className="mb-6 text-zinc-400">Movie collection from your CMS catalog.</p>
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="mx-auto max-w-7xl overflow-visible px-4 pb-16 pt-24 outline-none sm:px-6"
+      >
+        <header className="mb-10 border-b border-white/[0.08] pb-8">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-rose-400/90">Browse</p>
+          <h1 className="text-3xl font-black tracking-tight sm:text-5xl">Movies</h1>
+          <p className="mt-3 max-w-2xl text-base leading-relaxed text-zinc-400">
+            Everything in your CMS catalog, optimized for browsing and instant playback.
+          </p>
+        </header>
         <div className="grid grid-cols-2 gap-3 overflow-visible pb-16 pt-4 sm:gap-6 md:grid-cols-3 md:gap-8 lg:grid-cols-3 xl:grid-cols-4 [&>*]:min-w-0">
           {movies.map((item) => (
             <CatalogHoverCard
@@ -99,38 +108,45 @@ export default function MoviesScreen() {
             />
           ))}
         </div>
-        {isLoading ? <p className="mt-6 text-center text-sm text-zinc-400">Loading more...</p> : null}
+        {isLoading ? (
+          <p className="mt-8 text-center text-sm text-zinc-500">
+            <span className="inline-flex items-center gap-2">
+              <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/15 border-t-[#e50914]" />
+              Loading more…
+            </span>
+          </p>
+        ) : null}
         {hasMore ? <div ref={sentinelRef} className="h-10" /> : null}
       </main>
 
       {selectedMovie && !isPlayerOpen ? (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4">
-          <div className="w-full max-w-3xl overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 shadow-2xl">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
+          <div className="w-full max-w-3xl overflow-hidden rounded-3xl border border-white/[0.1] bg-zinc-900/98 shadow-2xl ring-1 ring-white/5">
             <div
               className="h-64 bg-cover bg-center"
               style={{ backgroundImage: `url(${selectedMovie.posterSrc})` }}
             />
-            <div className="space-y-4 p-6">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <h3 className="text-2xl font-bold">{selectedMovie.title}</h3>
+            <div className="space-y-5 p-6 sm:p-8">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <h3 className="text-2xl font-bold tracking-tight">{selectedMovie.title}</h3>
                 <button
                   type="button"
-                  className="rounded bg-zinc-700 px-3 py-1 text-sm hover:bg-zinc-600"
+                  className="btn-ghost shrink-0 text-sm"
                   onClick={() => setSelectedMovie(null)}
                 >
                   Close
                 </button>
               </div>
-              <p className="text-sm uppercase text-blue-300">
-                {selectedMovie.genre} • {selectedMovie.year}
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-rose-400/95">
+                {selectedMovie.genre} · {selectedMovie.year}
               </p>
-              <p className="text-zinc-300">{selectedMovie.description}</p>
+              <p className="leading-relaxed text-zinc-300">{selectedMovie.description}</p>
               <button
                 type="button"
-                className="rounded bg-blue-600 px-6 py-2 font-semibold text-white hover:bg-blue-500"
+                className="btn-primary px-7 py-3"
                 onClick={() => setIsPlayerOpen(true)}
               >
-                Play
+                Play now
               </button>
             </div>
           </div>
@@ -138,18 +154,18 @@ export default function MoviesScreen() {
       ) : null}
 
       {selectedMovie && isPlayerOpen ? (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4">
-          <div className="w-full max-w-5xl space-y-3">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-5xl space-y-4">
             <div className="flex justify-end">
               <button
                 type="button"
-                className="rounded bg-zinc-700 px-3 py-1 text-sm hover:bg-zinc-600"
+                className="btn-ghost text-sm"
                 onClick={() => {
                   setIsPlayerOpen(false);
                   setSelectedMovie(null);
                 }}
               >
-                Close
+                Close player
               </button>
             </div>
             <StreamPlayer

@@ -129,11 +129,20 @@ export default function TvShowsScreen() {
   };
 
   return (
-    <div className="min-h-screen overflow-x-clip overflow-y-visible bg-[#050505] text-white">
+    <div className="min-h-screen overflow-x-clip overflow-y-visible bg-[#121212] text-white">
       <TopNav />
-      <main className="mx-auto max-w-7xl overflow-visible px-4 pb-16 pt-24 sm:px-6">
-        <h2 className="mb-2 text-2xl font-black sm:text-4xl">TV Shows</h2>
-        <p className="mb-6 text-zinc-400">Streaming-first titles from your catalog.</p>
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="mx-auto max-w-7xl overflow-visible px-4 pb-16 pt-24 outline-none sm:px-6"
+      >
+        <header className="mb-10 border-b border-white/[0.08] pb-8">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-rose-400/90">Series</p>
+          <h1 className="text-3xl font-black tracking-tight sm:text-5xl">TV Shows</h1>
+          <p className="mt-3 max-w-2xl text-base leading-relaxed text-zinc-400">
+            Open a show to browse seasons and episodes, then jump straight into playback.
+          </p>
+        </header>
         <div className="grid grid-cols-2 gap-3 overflow-visible pb-16 pt-4 sm:gap-6 md:grid-cols-3 md:gap-8 lg:grid-cols-3 xl:grid-cols-4 [&>*]:min-w-0">
           {shows.map((item) => {
             const previewEpisodes = (item.episodes || []).slice(0, 4);
@@ -155,25 +164,28 @@ export default function TvShowsScreen() {
             );
           })}
         </div>
-        {isLoading ? <p className="mt-6 text-center text-sm text-zinc-400">Loading more...</p> : null}
+        {isLoading ? (
+          <p className="mt-8 text-center text-sm text-zinc-500">
+            <span className="inline-flex items-center gap-2">
+              <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/15 border-t-[#e50914]" />
+              Loading more…
+            </span>
+          </p>
+        ) : null}
         {hasMore ? <div ref={sentinelRef} className="h-10" /> : null}
       </main>
 
       {activeShow ? (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4">
-          <div className="w-full max-w-5xl space-y-3">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-5xl space-y-4">
             <div className="flex justify-end">
-              <button
-                type="button"
-                className="rounded bg-zinc-700 px-3 py-1 text-sm hover:bg-zinc-600"
-                onClick={closeModal}
-              >
+              <button type="button" className="btn-ghost text-sm" onClick={closeModal}>
                 Close
               </button>
             </div>
 
             {!isPlayerOpen ? (
-              <div className="overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-zinc-900 to-[#0a0f1a] shadow-2xl">
+              <div className="overflow-hidden rounded-3xl border border-white/[0.1] bg-gradient-to-br from-zinc-900 to-[#0a0f1a] shadow-2xl ring-1 ring-white/5">
                 <div className="grid gap-0 lg:grid-cols-[minmax(280px,1fr)_1.15fr]">
                   <div className="relative min-h-[220px] lg:min-h-[420px]">
                     <div
@@ -188,7 +200,7 @@ export default function TvShowsScreen() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/30 lg:bg-gradient-to-r" />
                     <div className="relative flex h-full min-h-[220px] flex-col justify-end p-5 lg:min-h-[420px] lg:p-8">
-                      <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-blue-400">
+                      <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-rose-400">
                         {modalHeroEpisode ? "Episode" : "Series"}
                       </p>
                       <h3 className="text-2xl font-black leading-tight md:text-4xl">
@@ -214,7 +226,7 @@ export default function TvShowsScreen() {
                       </div>
                       <button
                         type="button"
-                        className="mt-5 w-fit rounded-md bg-blue-600 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-blue-900/35 transition hover:bg-blue-500"
+                        className="btn-primary mt-5 w-fit px-7 py-3 text-sm font-bold"
                         onClick={() => {
                           const idx =
                             highlightedEpisodeIndex !== null
@@ -243,7 +255,7 @@ export default function TvShowsScreen() {
                             }}
                             className={`rounded-full border px-3 py-1 text-xs transition ${
                               activeSeason === season
-                                ? "border-blue-500 bg-blue-600/25 text-white"
+                                ? "border-red-500 bg-red-600/25 text-white"
                                 : "border-white/15 bg-zinc-950/80 text-zinc-400 hover:border-white/30 hover:text-zinc-200"
                             }`}
                           >
@@ -300,7 +312,7 @@ export default function TvShowsScreen() {
                               </p>
                             </div>
                             <div className="hidden shrink-0 items-center pr-1 sm:flex">
-                              <span className="rounded-full border border-white/20 px-2 py-1 text-[10px] text-zinc-400 transition group-hover/ep:border-blue-500/50 group-hover/ep:text-blue-300">
+                              <span className="rounded-full border border-white/20 px-2 py-1 text-[10px] text-zinc-400 transition group-hover/ep:border-red-500/50 group-hover/ep:text-rose-300">
                                 Play
                               </span>
                             </div>
