@@ -7,6 +7,7 @@ import TopNav from "@/components/TopNav";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 import CatalogHoverCard from "@/components/CatalogHoverCard";
 import type { ContentItem, TvChannel } from "@/lib/types";
+import { catalogMatchPercent } from "@/lib/catalogUi";
 
 export default function LiveTvScreen() {
   const [channels, setChannels] = useState<TvChannel[]>([]);
@@ -60,7 +61,9 @@ export default function LiveTvScreen() {
   });
 
   useEffect(() => {
-    void loadChannels(0, true);
+    queueMicrotask(() => {
+      void loadChannels(0, true);
+    });
   }, [loadChannels]);
 
   return (
@@ -103,12 +106,15 @@ export default function LiveTvScreen() {
               <CatalogHoverCard
                 key={channel.id}
                 density="cozy"
+                hoverStyle="netflix"
                 posterSrc={channel.posterSrc}
                 title={channel.title}
                 subtitle={channel.group}
                 metaLine={`Live • ${channel.group}`}
                 description={`Watch ${channel.title} live from your playlist.`}
                 previewThumbs={[channel.posterSrc]}
+                matchPercent={catalogMatchPercent(channel.id)}
+                seasonsLabel="Live"
                 badge={
                   <p className="rounded-full bg-emerald-600/90 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
                     Live

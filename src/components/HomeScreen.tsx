@@ -2,13 +2,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Info, Play, Sparkles } from "lucide-react";
+import { Play } from "lucide-react";
 import StreamPlayer from "@/components/StreamPlayer";
 import Footer from "@/components/Footer";
 import TopNav from "@/components/TopNav";
 import type { ContentItem, TvChannel } from "@/lib/types";
 import { useCatalogStore } from "@/stores/catalogStore";
 import { useSearchParams } from "next/navigation";
+import { catalogMatchPercent, catalogSeasonsLabel } from "@/lib/catalogUi";
 import CatalogHoverCard from "@/components/CatalogHoverCard";
 import CatalogRailSwiper from "@/components/CatalogRailSwiper";
 import { SwiperSlide } from "swiper/react";
@@ -32,6 +33,19 @@ function episodePlayerItem(show: ContentItem, episodeIndex: number): ContentItem
     streamUrl: ep.streamUrl,
     streamType: ep.streamType,
   };
+}
+
+function SplitPillBadge({ left, right }: { left: string; right?: string }) {
+  return (
+    <span className="inline-flex max-w-full overflow-hidden rounded-md text-[9px] font-bold uppercase tracking-wide shadow-[0_6px_20px_rgba(0,0,0,0.55)] ring-1 ring-white/15 sm:text-[10px]">
+      <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-violet-600 px-2 py-1.5 text-white sm:px-2.5 sm:py-1.5">
+        {left}
+      </span>
+      {right ? (
+        <span className="bg-zinc-100 px-2 py-1.5 font-semibold text-zinc-950 sm:px-2.5 sm:py-1.5">{right}</span>
+      ) : null}
+    </span>
+  );
 }
 
 export default function HomeScreen() {
@@ -65,6 +79,13 @@ export default function HomeScreen() {
   }, [loadInitial]);
 
   useEffect(() => {
+    document.body.classList.add("home-netflix-body");
+    return () => {
+      document.body.classList.remove("home-netflix-body");
+    };
+  }, []);
+
+  useEffect(() => {
     const query = searchParams.get("q") || "";
     const genre = searchParams.get("genre") || "all";
     setSelectedGenre(genre);
@@ -82,21 +103,26 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (!selectedItem?.episodes?.length) {
-      setHighlightedEpisodeIndex(null);
+      queueMicrotask(() => setHighlightedEpisodeIndex(null));
       return;
     }
     const first = selectedItem.episodes[0];
-    setDetailSeason(first.seasonTitle || "Season 1");
-    setHighlightedEpisodeIndex(null);
+    queueMicrotask(() => {
+      setDetailSeason(first.seasonTitle || "Season 1");
+      setHighlightedEpisodeIndex(null);
+    });
   }, [selectedItem]);
 
   const featuredItem = items.find((item) => item.featured) ?? items[0];
+  const landscapeRow = items.slice(0, 12);
+  const top10Row = items.slice(0, 10);
+  const badgeLeftPool = ["New Episode", "New Season", "Recently Added", "Trending"];
   const rails = [
-    { title: "Now Playing", items: items.slice(0, 10) },
-    { title: "Trending", items: items.slice(2, 12) },
+    { title: "Trending Now", items: items.slice(2, 14) },
+    { title: "Watch It Again", items: [...items].slice().reverse().slice(0, 12) },
     ...genres.slice(0, 4).map((genre) => ({
-      title: `${genre} Picks`,
-      items: items.filter((item) => item.genre === genre).slice(0, 10),
+      title: `${genre} for you`,
+      items: items.filter((item) => item.genre === genre).slice(0, 12),
     })),
   ];
   const visibleRails = rails.filter((rail) => rail.items.length > 0);
@@ -161,11 +187,11 @@ export default function HomeScreen() {
   const episodeAdvanceSource = playbackSourceItem;
 
   return (
-    <div className="min-h-screen overflow-x-clip overflow-y-visible bg-[#121212] text-white">
+    <div className="min-h-screen overflow-x-clip overflow-y-visible bg-black text-white">
       <TopNav />
 
-      <main id="main-content" tabIndex={-1} className="overflow-visible pt-20 outline-none">
-        <section className="relative min-h-[min(68vh,560px)] h-[56vh] overflow-hidden border-b border-white/[0.07] sm:h-[62vh] sm:min-h-[480px] md:h-[68vh]">
+      <main id="main-content" tabIndex={-1} className="overflow-visible outline-none">
+        <section className="relative min-h-[min(88vh,760px)] overflow-hidden sm:min-h-[90vh]">
           {featuredItem?.posterSrc ? (
             <div
               className="absolute inset-0 bg-cover bg-center transition-[filter] duration-700"
@@ -173,51 +199,31 @@ export default function HomeScreen() {
               aria-hidden
             />
           ) : (
-            <div
-              className="absolute inset-0 bg-gradient-to-br from-zinc-800 via-zinc-900 to-[#121212]"
-              aria-hidden
-            />
+            <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-black to-black" aria-hidden />
           )}
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 to-black/20" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-black/40 to-black/25" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_70%_50%,rgba(229,9,20,0.11),transparent)]" />
-          <div className="relative mx-auto flex h-full w-full max-w-7xl items-end px-4 pb-10 sm:px-6 sm:pb-14">
-            <div className="max-w-2xl pb-1">
-              <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/35 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-zinc-300 backdrop-blur-md sm:text-xs">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]" />
-                Featured pick
-              </p>
-              <h1 className="text-3xl font-black leading-[1.08] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-                <span className="bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent">
-                  {featuredItem?.title ?? (isLoading ? "Loading catalog…" : "Nothing to feature yet")}
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/50" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_75%_40%,rgba(229,9,20,0.12),transparent)]" />
+          <div className="relative mx-auto flex min-h-[min(88vh,760px)] w-full max-w-[1920px] flex-col justify-end px-4 pb-16 pt-28 sm:min-h-[90vh] sm:px-10 sm:pb-20 sm:pt-32">
+            <div className="max-w-2xl pb-2">
+              <p className="mb-2 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.28em] text-blue-400 sm:text-sm">
+                <span className="rounded-md bg-blue-500/20 px-2 py-0.5 text-blue-300 ring-1 ring-blue-400/30">
+                  StreamFlix
                 </span>
+              </p>
+              <h1 className="text-3xl font-black uppercase leading-[0.98] tracking-[-0.02em] text-white sm:text-5xl md:text-6xl lg:text-[3.35rem] lg:leading-[0.98] xl:text-7xl">
+                {featuredItem?.title ?? (isLoading ? "Loading catalog…" : "Nothing to feature yet")}
               </h1>
-              {featuredItem ? (
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <span className="rounded-full border border-white/15 bg-black/40 px-3 py-1 text-xs font-medium text-zinc-200 backdrop-blur-md">
-                    {featuredItem.genre}
-                  </span>
-                  <span className="rounded-full border border-white/15 bg-black/40 px-3 py-1 text-xs font-medium text-zinc-200 backdrop-blur-md">
-                    {featuredItem.year}
-                  </span>
-                  {featuredItem.featured ? (
-                    <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/35 bg-amber-500/15 px-3 py-1 text-xs font-medium text-amber-100 backdrop-blur-md">
-                      <Sparkles className="h-3.5 w-3.5" aria-hidden />
-                      Spotlight
-                    </span>
-                  ) : null}
-                </div>
-              ) : null}
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-zinc-400 sm:text-lg">
+              <p className="mt-4 max-w-xl text-sm font-normal leading-relaxed text-white/90 sm:text-base md:text-lg">
                 {featuredItem?.description ??
                   (isLoading
                     ? "Hang tight—we’re loading titles from your catalog."
                     : "Add content in the CMS or clear filters to see titles here.")}
               </p>
-              <div className="mt-7 flex flex-wrap items-center gap-3">
+              <div className="mt-8 flex flex-wrap items-center gap-3">
                 <button
                   type="button"
-                  className="btn-primary px-7 py-3 text-sm sm:text-base disabled:pointer-events-none disabled:opacity-45"
+                  className="btn-netflix-play disabled:pointer-events-none disabled:opacity-45"
                   disabled={
                     !featuredItem ||
                     !(featuredItem.episodes?.[0]?.streamUrl ||
@@ -241,27 +247,38 @@ export default function HomeScreen() {
                     setIsPlayerOpen(true);
                   }}
                 >
-                  <Play className="h-5 w-5 shrink-0 opacity-95" strokeWidth={2.25} aria-hidden />
+                  <Play className="h-6 w-6 shrink-0 fill-black text-black" strokeWidth={0} aria-hidden />
                   Play
                 </button>
                 <button
                   type="button"
-                  className="btn-secondary px-7 py-3 text-sm sm:text-base disabled:pointer-events-none disabled:opacity-45"
+                  className="btn-netflix-info disabled:pointer-events-none disabled:opacity-45"
                   disabled={!featuredItem}
                   onClick={() => {
                     if (!featuredItem) return;
                     setSelectedItem(featuredItem);
                   }}
                 >
-                  <Info className="h-4 w-4 opacity-90" aria-hidden />
-                  Synopsis
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white/90 text-lg font-serif leading-none">
+                    i
+                  </span>
+                  More Info
                 </button>
               </div>
+            </div>
+            <div
+              className="pointer-events-none absolute bottom-6 right-4 flex items-stretch sm:bottom-10 sm:right-8"
+              aria-hidden
+            >
+              <span className="w-0.5 shrink-0 bg-white" />
+              <span className="flex items-center bg-white/15 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm sm:text-sm">
+                U/A 16+
+              </span>
             </div>
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-7xl space-y-16 overflow-visible px-4 py-14 sm:space-y-[4.5rem] sm:px-6 sm:py-16">
+        <section className="relative z-10 -mt-16 space-y-10 overflow-visible bg-black px-4 pb-16 pt-4 sm:-mt-24 sm:space-y-12 sm:px-8 sm:pb-20 sm:pt-6">
           {hasActiveFilters ? (
             <div
               className="flex flex-col gap-3 rounded-2xl border border-white/[0.1] bg-zinc-900/60 px-4 py-4 shadow-lg shadow-black/30 backdrop-blur-md sm:flex-row sm:items-center sm:justify-between sm:px-5"
@@ -362,25 +379,100 @@ export default function HomeScreen() {
             </div>
           ) : null}
 
-          {visibleRails.length > 0 ? (
-            <p className="mb-2 text-sm leading-relaxed text-zinc-500 md:mb-4">
-              <span className="md:hidden">
-                Swipe each row to browse. Tap <span className="text-zinc-400">Play</span> to watch or{" "}
-                <span className="text-zinc-400">Info</span> for the synopsis.
-              </span>
-              <span className="hidden md:inline">
-                Hover a poster for a quick summary and actions, or use the arrows on each row to scroll.
-              </span>
-            </p>
-          ) : tvChannels.length > 0 && !isLoading ? (
-            <p className="mb-2 text-sm leading-relaxed text-zinc-500 md:mb-4">
-              <span className="md:hidden">
-                Swipe the Live TV row and tap <span className="text-zinc-400">Play</span> on a channel card.
-              </span>
-              <span className="hidden md:inline">
-                Hover channel tiles for details, or use the arrows to move along the Live TV row.
-              </span>
-            </p>
+          <p className="sr-only">
+            Rows of titles scroll horizontally. Use row arrows on desktop or swipe on touch devices. Choose Play
+            to watch or open a title for more information.
+          </p>
+
+          {!hasActiveFilters && landscapeRow.length > 0 ? (
+            <section className="overflow-visible scroll-mt-24" aria-label="Spotlight row">
+              <h2 className="mb-3 text-lg font-semibold text-zinc-100 sm:mb-4 sm:text-xl md:text-2xl">
+                Courtroom intrigue
+              </h2>
+              <CatalogRailSwiper variant="landscape" relaxedGap>
+                {landscapeRow.map((item, index) => (
+                  <SwiperSlide key={`landscape-${item.id}`} className="!flex py-2 md:py-4">
+                    <CatalogHoverCard
+                      density="cozy"
+                      aspect="video"
+                      hideFooter
+                      hoverStyle="netflix"
+                      posterSrc={item.posterSrc}
+                      title={item.title}
+                      subtitle={`${item.genre} • ${item.year}`}
+                      metaLine={railMetaLine(item)}
+                      description={item.description}
+                      previewThumbs={railPreviewThumbs(item)}
+                      matchPercent={catalogMatchPercent(item.id)}
+                      seasonsLabel={catalogSeasonsLabel(item)}
+                      posterBottomSlot={
+                        <SplitPillBadge
+                          left={badgeLeftPool[index % badgeLeftPool.length]}
+                          right="Play"
+                        />
+                      }
+                      onCardClick={() => {
+                        setSelectedItem(item);
+                        setIsPlayerOpen(false);
+                      }}
+                      onPlay={() => playRailItem(item)}
+                    />
+                  </SwiperSlide>
+                ))}
+              </CatalogRailSwiper>
+            </section>
+          ) : null}
+
+          {!hasActiveFilters && top10Row.length > 0 ? (
+            <section className="overflow-visible scroll-mt-24" aria-label="Top 10">
+              <h2 className="mb-3 text-lg font-semibold text-zinc-100 sm:mb-4 sm:text-xl md:text-2xl">
+                Top 10 series today
+              </h2>
+              <CatalogRailSwiper variant="top10" relaxedGap>
+                {top10Row.map((item, index) => {
+                  const rank = index + 1;
+                  return (
+                    <SwiperSlide key={`top10-${item.id}`} className="!flex py-2 md:py-4">
+                      <div className="grid h-full w-full min-h-[13rem] grid-cols-[minmax(2.25rem,2.75rem)_minmax(0,1fr)] items-end gap-x-2 sm:min-h-[15rem] sm:grid-cols-[minmax(2.75rem,3.25rem)_minmax(0,1fr)] sm:gap-x-2.5">
+                        <div className="relative z-0 min-h-[11rem] self-stretch sm:min-h-[13rem]">
+                          <span
+                            className="streamflix-rank-outline pointer-events-none absolute bottom-[6.5rem] right-0 select-none text-[2.65rem] leading-[0.82] sm:bottom-[7rem] sm:text-[3.15rem] md:bottom-[7.5rem] md:text-[3.75rem] lg:bottom-[7.85rem] lg:text-[4.15rem]"
+                            aria-hidden
+                          >
+                            {rank}
+                          </span>
+                        </div>
+                        <div className="relative z-[1] min-w-0">
+                          <CatalogHoverCard
+                            density="cozy"
+                            hoverStyle="netflix"
+                            posterSrc={item.posterSrc}
+                            title={item.title}
+                            subtitle={`${item.genre} • ${item.year}`}
+                            metaLine={railMetaLine(item)}
+                            description={item.description}
+                            previewThumbs={railPreviewThumbs(item)}
+                            matchPercent={catalogMatchPercent(item.id)}
+                            seasonsLabel={catalogSeasonsLabel(item)}
+                            posterBottomSlot={
+                              <SplitPillBadge
+                                left={badgeLeftPool[(index + 2) % badgeLeftPool.length]}
+                                right="Play"
+                              />
+                            }
+                            onCardClick={() => {
+                              setSelectedItem(item);
+                              setIsPlayerOpen(false);
+                            }}
+                            onPlay={() => playRailItem(item)}
+                          />
+                        </div>
+                      </div>
+                    </SwiperSlide>
+                  );
+                })}
+              </CatalogRailSwiper>
+            </section>
           ) : null}
 
           {visibleRails.map((rail) => (
@@ -389,36 +481,27 @@ export default function HomeScreen() {
               className="overflow-visible scroll-mt-24"
               aria-label={`${rail.title}, ${rail.items.length} titles`}
             >
-              <div className="mb-6 flex flex-wrap items-end gap-3 md:mb-8">
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-xl font-bold tracking-tight text-white sm:text-2xl">{rail.title}</h2>
-                    <span className="rounded-full border border-white/12 bg-white/[0.06] px-2.5 py-0.5 text-xs font-medium tabular-nums text-zinc-400">
-                      {rail.items.length}
-                    </span>
-                  </div>
-                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-500">
-                    {rail.title === "Trending"
-                      ? "Popular picks in your library right now."
-                      : rail.title === "Now Playing"
-                        ? "Jump back into what’s lined up first."
-                        : "Tap a card for the full synopsis."}
-                  </p>
-                </div>
-                <span className="hidden min-h-px min-w-[2rem] flex-1 translate-y-[-6px] bg-gradient-to-r from-white/20 to-transparent sm:block" />
-              </div>
+              <h2 className="mb-3 text-lg font-semibold text-zinc-100 sm:mb-4 sm:text-xl md:text-2xl">{rail.title}</h2>
               <CatalogRailSwiper variant="poster" relaxedGap>
                 {rail.items.map((item, index) => (
                   <SwiperSlide key={`${rail.title}-${item.id}`} className="!flex py-2 md:py-4">
                     <CatalogHoverCard
                       density="cozy"
+                      hoverStyle="netflix"
                       posterSrc={item.posterSrc}
                       title={item.title}
                       subtitle={`${item.genre} • ${item.year}`}
                       metaLine={railMetaLine(item)}
                       description={item.description}
-                      rank={rail.title === "Trending" ? index + 1 : undefined}
                       previewThumbs={railPreviewThumbs(item)}
+                      matchPercent={catalogMatchPercent(item.id)}
+                      seasonsLabel={catalogSeasonsLabel(item)}
+                      posterBottomSlot={
+                        <SplitPillBadge
+                          left={badgeLeftPool[(index + rail.title.length) % badgeLeftPool.length]}
+                          right="Play"
+                        />
+                      }
                       onCardClick={() => {
                         setSelectedItem(item);
                         setIsPlayerOpen(false);
@@ -433,31 +516,21 @@ export default function HomeScreen() {
 
           {tvChannels.length > 0 ? (
             <section className="overflow-visible scroll-mt-24" aria-label={`Live TV, ${tvChannels.length} channels`}>
-              <div className="mb-6 flex flex-wrap items-end gap-3 md:mb-8">
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-xl font-bold tracking-tight text-white sm:text-2xl">Live TV</h2>
-                    <span className="rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium tabular-nums text-emerald-200/90">
-                      {tvChannels.length}
-                    </span>
-                  </div>
-                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-500">
-                    Channels from your playlist—tap Play to tune in.
-                  </p>
-                </div>
-                <span className="hidden min-h-px min-w-[2rem] flex-1 translate-y-[-6px] bg-gradient-to-r from-emerald-500/35 to-transparent sm:block" />
-              </div>
+              <h2 className="mb-3 text-lg font-semibold text-zinc-100 sm:mb-4 sm:text-xl md:text-2xl">Live TV</h2>
               <CatalogRailSwiper variant="poster" relaxedGap>
                 {tvChannels.map((channel) => (
                   <SwiperSlide key={channel.id} className="!flex py-2 md:py-4">
                     <CatalogHoverCard
                       density="cozy"
+                      hoverStyle="netflix"
                       posterSrc={channel.posterSrc}
                       title={channel.title}
                       subtitle={channel.group}
                       metaLine={`Live • ${channel.group}`}
                       description={`Watch ${channel.title} live from your playlist.`}
                       previewThumbs={[channel.posterSrc]}
+                      matchPercent={catalogMatchPercent(channel.id)}
+                      seasonsLabel="Live"
                       badge={
                         <p className="rounded-full bg-emerald-600/90 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
                           Live
@@ -714,7 +787,7 @@ export default function HomeScreen() {
                               />
                               <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition group-hover/ep:opacity-100">
                                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-black shadow-lg">
-                                  ▶
+                                  <Play className="ml-0.5 h-4 w-4" fill="currentColor" strokeWidth={0} aria-hidden />
                                 </span>
                               </div>
                               <span className="absolute bottom-1 left-1 rounded bg-black/80 px-1.5 py-0.5 font-mono text-[10px] font-bold text-white">
@@ -781,7 +854,7 @@ export default function HomeScreen() {
                   }}
                 >
                   <Play className="h-5 w-5 shrink-0 opacity-95" strokeWidth={2.25} aria-hidden />
-                  Play now
+                  Play
                 </button>
               </div>
             </div>

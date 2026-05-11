@@ -10,7 +10,7 @@ import "swiper/css/free-mode";
 
 type CatalogRailSwiperProps = {
   children: React.ReactNode;
-  variant?: "poster" | "video";
+  variant?: "poster" | "video" | "landscape" | "top10";
   /** Wider gaps between slides + calmer padding — e.g. homepage rails */
   relaxedGap?: boolean;
 };
@@ -23,6 +23,8 @@ export default function CatalogRailSwiper({
   const reactId = useId().replace(/:/g, "");
   const prevClass = `catalog-rail-prev-${reactId}`;
   const nextClass = `catalog-rail-next-${reactId}`;
+  const wideRail = variant === "video" || variant === "landscape";
+  const top10Rail = variant === "top10";
 
   return (
     <div className="catalog-rail-wrap group/rail relative">
@@ -45,26 +47,34 @@ export default function CatalogRailSwiper({
         modules={[Navigation, FreeMode]}
         slidesPerView="auto"
         spaceBetween={
-          relaxedGap ? (variant === "video" ? 14 : 14) : variant === "video" ? 12 : 12
+          top10Rail ? (relaxedGap ? 16 : 14) : relaxedGap ? 14 : 12
         }
         breakpoints={{
           640: {
-            spaceBetween: relaxedGap
-              ? variant === "video"
-                ? 20
+            spaceBetween: top10Rail
+              ? relaxedGap
+                ? 22
                 : 18
-              : variant === "video"
-                ? 24
-                : 24,
+              : relaxedGap
+                ? wideRail
+                  ? 20
+                  : 18
+                : wideRail
+                  ? 24
+                  : 24,
           },
           768: {
-            spaceBetween: relaxedGap
-              ? variant === "video"
+            spaceBetween: top10Rail
+              ? relaxedGap
                 ? 28
                 : 24
-              : variant === "video"
-                ? 32
-                : 32,
+              : relaxedGap
+                ? wideRail
+                  ? 28
+                  : 24
+                : wideRail
+                  ? 32
+                  : 32,
           },
         }}
         slidesOffsetBefore={0}
@@ -72,7 +82,9 @@ export default function CatalogRailSwiper({
         watchOverflow
         grabCursor
         freeMode={{ enabled: true, momentum: true, momentumRatio: 0.88, minimumVelocity: 0.02 }}
-        className={`catalog-swiper catalog-swiper--${variant} !overflow-visible pt-1 ${relaxedGap ? "pb-6 md:pb-12 md:pt-2" : "pb-10 md:pb-20 md:pt-2"}`}
+        className={`catalog-swiper catalog-swiper--${
+          variant === "landscape" ? "landscape" : variant === "top10" ? "top10" : variant
+        } !overflow-visible pt-1 ${relaxedGap ? "pb-6 md:pb-12 md:pt-2" : "pb-10 md:pb-20 md:pt-2"}`}
         style={{ overflow: "visible" }}
         navigation={{
           prevEl: `.${prevClass}`,

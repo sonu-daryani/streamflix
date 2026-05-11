@@ -7,6 +7,7 @@ import TopNav from "@/components/TopNav";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 import CatalogHoverCard from "@/components/CatalogHoverCard";
 import type { ContentItem } from "@/lib/types";
+import { catalogMatchPercent, catalogSeasonsLabel } from "@/lib/catalogUi";
 
 export default function MoviesScreen() {
   const [items, setItems] = useState<ContentItem[]>([]);
@@ -91,12 +92,16 @@ export default function MoviesScreen() {
           {movies.map((item) => (
             <CatalogHoverCard
               key={item.id}
+              density="cozy"
+              hoverStyle="netflix"
               posterSrc={item.posterSrc}
               title={item.title}
               subtitle={`${item.genre} • ${item.year}`}
               metaLine={`${item.year} • ${item.genre}`}
               description={item.description}
               previewThumbs={[item.posterSrc]}
+              matchPercent={catalogMatchPercent(item.id)}
+              seasonsLabel={catalogSeasonsLabel(item)}
               onCardClick={() => {
                 setSelectedMovie(item);
                 setIsPlayerOpen(false);
@@ -146,7 +151,7 @@ export default function MoviesScreen() {
                 className="btn-primary px-7 py-3"
                 onClick={() => setIsPlayerOpen(true)}
               >
-                Play now
+                Play
               </button>
             </div>
           </div>

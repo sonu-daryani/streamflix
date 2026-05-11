@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "StreamFlix | Next.js Streaming Platform",
-  description: "A Netflix-style streaming platform demo with a custom player.",
+  title: "StreamFlix | Streaming",
+  description: "A Netflix-inspired streaming experience with rows, hero, and hover previews.",
 };
 
 export default function RootLayout({

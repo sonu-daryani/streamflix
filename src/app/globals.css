@@ -49,6 +49,12 @@ body {
   background-attachment: fixed;
 }
 
+/* Homepage: solid black canvas like Netflix TV rows */
+body.home-netflix-body {
+  background-color: #000000;
+  background-image: none;
+}
+
 ::selection {
   background: rgba(229, 9, 20, 0.38);
   color: #fff;
@@ -372,8 +378,8 @@ body {
  */
 .catalog-swiper--poster .swiper-slide {
   width: min(
-      240px,
-      max(164px, calc((100vw - 2rem - 0.75rem) / 2))
+      268px,
+      max(176px, calc((100vw - 2rem - 0.75rem) / 2))
     )
     !important;
 }
@@ -381,8 +387,8 @@ body {
 @media (min-width: 640px) and (max-width: 767px) {
   .catalog-swiper--poster .swiper-slide {
     width: min(
-        240px,
-        max(168px, calc((100vw - 3rem - 1.5rem) / 2))
+        268px,
+        max(180px, calc((100vw - 3rem - 1.5rem) / 2))
       )
       !important;
   }
@@ -391,8 +397,8 @@ body {
 @media (min-width: 768px) {
   .catalog-swiper--poster .swiper-slide {
     width: min(
-        240px,
-        max(168px, calc((100vw - 3rem - 4rem) / 3))
+        268px,
+        max(184px, calc((100vw - 3rem - 4rem) / 3))
       )
       !important;
   }
@@ -425,4 +431,138 @@ body {
       )
       !important;
   }
+}
+
+/* Landscape title cards (~16:9) — Netflix “Courtroom Intrigue” style rows */
+.catalog-swiper--landscape .swiper-slide {
+  width: min(
+      360px,
+      max(200px, calc((100vw - 2rem - 0.75rem) / 1.35))
+    )
+    !important;
+}
+
+@media (min-width: 640px) and (max-width: 767px) {
+  .catalog-swiper--landscape .swiper-slide {
+    width: min(
+        380px,
+        max(220px, calc((100vw - 3rem - 1.5rem) / 1.45))
+      )
+      !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .catalog-swiper--landscape .swiper-slide {
+    width: min(
+        420px,
+        max(240px, calc((100vw - 3rem - 4rem) / 2.15))
+      )
+      !important;
+  }
+}
+
+/* Top 10: rank gutter + poster (slide wider than plain poster rails) */
+.catalog-swiper--top10 .swiper-slide {
+  width: min(
+      272px,
+      max(188px, calc((100vw - 2rem - 0.75rem) / 1.95))
+    )
+    !important;
+}
+
+@media (min-width: 768px) {
+  .catalog-swiper--top10 .swiper-slide {
+    width: min(
+        288px,
+        max(196px, calc((100vw - 3rem - 4rem) / 2.65))
+      )
+      !important;
+  }
+}
+
+/* Top 10 rank — StreamFlix (cool outline, no Netflix red chrome) */
+.streamflix-rank-outline {
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  color: transparent;
+  -webkit-text-stroke: 2.5px rgba(226, 232, 240, 0.94);
+  paint-order: stroke fill;
+  text-shadow:
+    0 0 28px rgba(59, 130, 246, 0.35),
+    0 10px 32px rgba(0, 0, 0, 0.65);
+}
+
+@media (max-width: 767px) {
+  .streamflix-rank-outline {
+    -webkit-text-stroke-width: 2px;
+  }
+}
+
+/* Hero CTA — solid white play control */
+.btn-netflix-play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.25rem;
+  border: none;
+  background: #ffffff;
+  padding: 0.65rem 1.35rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #0a0a0a;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.btn-netflix-play:hover:not(:disabled) {
+  filter: brightness(0.96);
+}
+
+.btn-netflix-play:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-netflix-play:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.85);
+  outline-offset: 2px;
+}
+
+.btn-netflix-play:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-netflix-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.25rem;
+  border: none;
+  background: rgba(109, 109, 110, 0.7);
+  padding: 0.65rem 1.35rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #fafafa;
+  backdrop-filter: blur(6px);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.btn-netflix-info:hover:not(:disabled) {
+  background: rgba(109, 109, 110, 0.88);
+}
+
+.btn-netflix-info:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-netflix-info:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.45);
+  outline-offset: 2px;
+}
+
+.btn-netflix-info:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }

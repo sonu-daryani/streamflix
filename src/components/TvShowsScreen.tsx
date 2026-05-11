@@ -7,6 +7,8 @@ import TopNav from "@/components/TopNav";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 import CatalogHoverCard from "@/components/CatalogHoverCard";
 import type { ContentItem } from "@/lib/types";
+import { catalogMatchPercent, catalogSeasonsLabel } from "@/lib/catalogUi";
+import { Play } from "lucide-react";
 
 const episodeThumb = (episode: NonNullable<ContentItem["episodes"]>[number], fallback: string) =>
   episode.posterSrc?.trim() ? episode.posterSrc : fallback;
@@ -152,12 +154,16 @@ export default function TvShowsScreen() {
             return (
               <CatalogHoverCard
                 key={item.id}
+                density="cozy"
+                hoverStyle="netflix"
                 posterSrc={item.posterSrc}
                 title={item.title}
                 subtitle={subtitle}
                 metaLine={metaLine}
                 description={item.description || "Browse seasons and episodes."}
                 previewThumbs={previewEpisodes.map((ep) => episodeThumb(ep, item.posterSrc))}
+                matchPercent={catalogMatchPercent(item.id)}
+                seasonsLabel={catalogSeasonsLabel(item)}
                 onCardClick={() => openShowDetail(item)}
                 onPlay={() => playTvFromCard(item)}
               />
@@ -226,7 +232,7 @@ export default function TvShowsScreen() {
                       </div>
                       <button
                         type="button"
-                        className="btn-primary mt-5 w-fit px-7 py-3 text-sm font-bold"
+                        className="btn-primary mt-5 inline-flex w-fit items-center gap-2 px-7 py-3 text-sm font-bold"
                         onClick={() => {
                           const idx =
                             highlightedEpisodeIndex !== null
@@ -236,7 +242,8 @@ export default function TvShowsScreen() {
                           setIsPlayerOpen(true);
                         }}
                       >
-                        ▶ Play
+                        <Play className="h-4 w-4 shrink-0 opacity-95" strokeWidth={2.25} aria-hidden />
+                        Play
                       </button>
                     </div>
                   </div>
@@ -296,7 +303,7 @@ export default function TvShowsScreen() {
                               />
                               <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition group-hover/ep:opacity-100">
                                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-black shadow-lg">
-                                  ▶
+                                  <Play className="ml-0.5 h-4 w-4" fill="currentColor" strokeWidth={0} aria-hidden />
                                 </span>
                               </div>
                               <span className="absolute bottom-1 left-1 rounded bg-black/80 px-1.5 py-0.5 font-mono text-[10px] font-bold text-white">
